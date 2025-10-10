@@ -1,0 +1,107 @@
+{
+	"info": {
+		"_postman_id": "ab1910d5-111f-4e72-84ba-4dd4c15212f6",
+		"name": "Expense Tracker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48850588",
+		"_collection_link": "https://manvi-mishra0611-764176.postman.co/workspace/Manvi-Mishra's-Workspace~0adec362-4ac5-40cc-804e-977738e49505/collection/48850588-ab1910d5-111f-4e72-84ba-4dd4c15212f6?action=share&source=collection_link&creator=48850588"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Lunch\",\r\n  \"amount\": 150,\r\n  \"category\": \"Food\",\r\n  \"date\": \"2025-10-10\",\r\n  \"note\": \"Team lunch\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/expenses",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"expenses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/expenses",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"expenses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"amount\": 200\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/expenses/68e8af65380ceac413634c3a",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"expenses",
+						"68e8af65380ceac413634c3a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"amount\": 200\r\n}\r\n"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/expenses/68e8af65380ceac413634c3a",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"expenses",
+						"68e8af65380ceac413634c3a"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

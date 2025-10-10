@@ -34,3 +34,12 @@ app.use('/api/expenses', expenseRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>console.log(`💡 Server running on http://localhost:${PORT}`));
+
+
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+
+// 404 handler (if no route matched)
+app.use(notFound);
+
+// Global error handler (must be last)
+app.use(errorHandler);
