@@ -1,5 +1,4 @@
-// client/src/pages/ExpensesList.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../api.js";
@@ -7,13 +6,17 @@ import Loader from "../components/Loader";
 
 const ExpensesList = () => {
   const [expenses, setExpenses] = useState([]);
-  const [loading, setLoading] = useState(true); // used for fetch + delete
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   // Filters
   const [categoryFilter, setCategoryFilter] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [search, setSearch] = useState("");
+
+  // Debounce ref
+  const debounceRef = useRef(null);
 
   // Fetch expenses
   const fetchExpenses = async () => {
@@ -25,10 +28,10 @@ const ExpensesList = () => {
       if (categoryFilter) query += `&category=${categoryFilter}`;
       if (fromDate) query += `&from=${fromDate}`;
       if (toDate) query += `&to=${toDate}`;
+      if (search) query += `&search=${search}`;
 
       const res = await api.get(query);
-      // expected response { success:true, data:[...], page, pages, total }
-      const data = res.data?.data ?? res.data?.expenses ?? res.data ?? [];
+      const data = res.data?.data ?? [];
       setExpenses(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
@@ -39,6 +42,19 @@ const ExpensesList = () => {
     }
   };
 
+  // 🔥 Debounced fetch
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      fetchExpenses();
+    }, 500);
+
+    return () => clearTimeout(debounceRef.current);
+  }, [categoryFilter, fromDate, toDate, search]);
+
   // Delete expense
   const handleDelete = async (_id) => {
     const sure = window.confirm("Are you sure you want to delete this expense?");
@@ -47,7 +63,6 @@ const ExpensesList = () => {
     try {
       setLoading(true);
       await api.delete(`/api/expenses/${_id}`);
-      // update local state
       setExpenses((prev) => prev.filter((exp) => exp._id !== _id));
       toast.success("Expense deleted successfully");
     } catch (err) {
@@ -58,28 +73,24 @@ const ExpensesList = () => {
     }
   };
 
-  useEffect(() => {
-    fetchExpenses();
-  }, [categoryFilter, fromDate, toDate]);
-
-  // Example fallback items when API returns empty - optional
-  const exampleItems = [
-    { _id: "ex1", title: "Groceries", amount: 50, category: "Food", date: "2025-10-10" },
-    { _id: "ex2", title: "Electricity Bill", amount: 75, category: "Utilities", date: "2025-10-09" },
-    { _id: "ex3", title: "Bus Pass", amount: 30, category: "Transport", date: "2025-10-08" },
-  ];
-
-  const listToShow = expenses.length === 0 ? exampleItems : expenses;
-
   return (
     <div>
       <h2>Expenses List</h2>
 
-      {/* Filters */}
+      {/* Filters + Search */}
       <div style={{ marginBottom: 10 }}>
+        <input
+          type="text"
+          placeholder="Search by title..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ marginRight: 8 }}
+        />
+
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
+          style={{ marginRight: 8 }}
         >
           <option value="">All Categories</option>
           <option value="Food">Food</option>
@@ -91,6 +102,7 @@ const ExpensesList = () => {
           type="date"
           value={fromDate}
           onChange={(e) => setFromDate(e.target.value)}
+          style={{ marginRight: 8 }}
         />
 
         <input
@@ -100,19 +112,23 @@ const ExpensesList = () => {
         />
       </div>
 
-      {/* Loader */}
       {loading && <Loader />}
 
-      {/* Table + states */}
       {!loading && error && <p style={{ color: "red" }}>{error}</p>}
 
       {!loading && !error && (
         <>
-          {listToShow.length === 0 ? (
+          {expenses.length === 0 ? (
             <p>No expenses found</p>
           ) : (
             <div style={{ overflowX: "auto" }}>
-              <table border="1" cellPadding="6" style={{ minWidth: 700 }}>
+              <table
+                style={{
+                  width: "100%",
+                  borderCollapse: "collapse",
+                  marginTop: 10,
+                }}
+              >
                 <thead>
                   <tr>
                     <th>Title</th>
@@ -124,12 +140,12 @@ const ExpensesList = () => {
                 </thead>
 
                 <tbody>
-                  {listToShow.map((exp) => (
+                  {expenses.map((exp) => (
                     <tr key={exp._id}>
                       <td>{exp.title}</td>
                       <td>₹{exp.amount}</td>
                       <td>{exp.category}</td>
-                      <td>{exp.date?.slice(0, 10) ?? ""}</td>
+                      <td>{exp.date?.slice(0, 10)}</td>
                       <td>
                         <Link to={`/edit/${exp._id}`}>Edit</Link>{" "}
                         |{" "}
@@ -157,4 +173,3 @@ const ExpensesList = () => {
 };
 
 export default ExpensesList;
-

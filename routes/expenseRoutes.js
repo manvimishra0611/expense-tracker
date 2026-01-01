@@ -80,20 +80,21 @@ router.post('/', validateExpense, handleValidation, async (req, res) => {
   }
 });
 
-// GET /api/expenses (with filters, sorting, pagination & date validation)
 router.get('/', async (req, res, next) => {
   try {
-    const { category, from, to } = req.query;
+    const { category, from, to, search } = req.query;
     let page = parseInt(req.query.page) || 1;
     let limit = parseInt(req.query.limit) || 10;
     const sort = req.query.sort || '-date';
 
     const query = {};
 
-    // Category filter (optional)
+    if (search) {
+      query.title = { $regex: search, $options: "i" };
+    }
+
     if (category) query.category = category;
 
-    // Date filters (optional) with validation
     if (from) {
       const fromDate = new Date(from);
       if (isNaN(fromDate)) {
@@ -101,6 +102,7 @@ router.get('/', async (req, res, next) => {
       }
       query.date = { ...query.date, $gte: fromDate };
     }
+
     if (to) {
       const toDate = new Date(to);
       if (isNaN(toDate)) {
@@ -108,10 +110,6 @@ router.get('/', async (req, res, next) => {
       }
       query.date = { ...query.date, $lte: toDate };
     }
-
-    // Pagination
-    if (page < 1) page = 1;
-    if (limit < 1) limit = 10;
 
     const total = await Expense.countDocuments(query);
     const pages = Math.ceil(total / limit) || 1;
@@ -133,7 +131,6 @@ router.get('/', async (req, res, next) => {
     next(err);
   }
 });
-
 
 
 // UPDATE Expense
