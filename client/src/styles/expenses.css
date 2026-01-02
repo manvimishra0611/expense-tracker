@@ -1,0 +1,87 @@
+/* Layout */
+.page {
+  padding: 20px;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.filters input,
+.filters select {
+  padding: 6px 8px;
+}
+
+/* Table */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #1e293b;
+  color: white;
+  padding: 10px;
+  text-align: left;
+}
+
+.table td {
+  padding: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table tr:hover {
+  background: #f8fafc;
+}
+
+/* Category badges */
+.badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: white;
+}
+
+.badge.food { background: #22c55e; }
+.badge.travel { background: #3b82f6; }
+.badge.bills { background: #ef4444; }
+.badge.health { background: #a855f7; }
+.badge.other { background: #64748b; }
+
+/* Buttons */
+.btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn.primary {
+  background: #2563eb;
+  color: white;
+}
+
+.btn.danger {
+  background: #dc2626;
+  color: white;
+}
+
+.btn.link {
+  background: none;
+  color: #2563eb;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+  }
+}

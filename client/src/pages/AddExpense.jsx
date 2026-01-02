@@ -16,12 +16,12 @@ export default function AddExpense() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+  const handleChange = (e) =>
+    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // basic client-side validation
     if (!form.title || !form.amount || !form.category || !form.date) {
       toast.error("Please fill title, amount, category and date");
       return;
@@ -31,7 +31,7 @@ export default function AddExpense() {
       setLoading(true);
       await api.post("/api/expenses", form);
       toast.success("Expense added successfully");
-      navigate("/"); // go back to list
+      navigate("/");
     } catch (err) {
       console.error(err);
       toast.error(err?.response?.data?.message || "Failed to add expense");
@@ -53,17 +53,34 @@ export default function AddExpense() {
 
         <div>
           <label>Amount</label><br />
-          <input name="amount" type="number" value={form.amount} onChange={handleChange} />
+          <input
+            name="amount"
+            type="number"
+            value={form.amount}
+            onChange={handleChange}
+          />
         </div>
 
         <div>
           <label>Category</label><br />
-          <input name="category" value={form.category} onChange={handleChange} />
+          <select name="category" value={form.category} onChange={handleChange}>
+            <option value="">Select category</option>
+            <option value="Food">Food</option>
+            <option value="Travel">Travel</option>
+            <option value="Bills">Bills</option>
+            <option value="Health">Health</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
 
         <div>
           <label>Date</label><br />
-          <input name="date" type="date" value={form.date} onChange={handleChange} />
+          <input
+            name="date"
+            type="date"
+            value={form.date}
+            onChange={handleChange}
+          />
         </div>
 
         <div>
